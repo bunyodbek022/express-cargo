@@ -38,7 +38,7 @@ CREATE TABLE orders (
 
 
 CREATE TABLE order_products (
-    pid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
     quantity INT DEFAULT 1,
@@ -49,12 +49,13 @@ CREATE TABLE order_products (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TYPE STATUS as ENUM('ongoing', 'in procces', 'delivered', 'rejected');
 
 
 CREATE TABLE operation (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    status_id INT NOT NULL,
+    status STATUS DEFAULT 'ongoing',
     operation_date TIMESTAMP DEFAULT NOW(),
     admin_id UUID REFERENCES admin(id) ON DELETE SET NULL,
     description TEXT
