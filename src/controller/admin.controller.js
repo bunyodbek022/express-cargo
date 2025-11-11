@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ApiError } from '../middleware/apiError.js'
+import { ApiError } from '../utils/apiError.js'
 import baseClass from '../helper/baseClass.js'
 
 export const Admin = {
@@ -14,28 +14,30 @@ export const Admin = {
         'admin',
         lim,
         off,
-        { operations: true }
-      );
-      const newResult = result.map(({ password, token, ...rest }) => rest);
+        { operations: true },
+      )
+      const newResult = result.map(({ password, token, ...rest }) => rest)
       return res.status(200).json({
-      success: true,
-      page: pa,
-      limit: lim,
-      data: newResult,
-    });
+        success: true,
+        page: pa,
+        limit: lim,
+        data: newResult,
+      })
     } catch (err) {
       next(err)
     }
   },
   async getOne(req, res, next) {
     try {
-      const { id } = req.params;
-      const result = await baseClass.getOne('admin', id);
-      if (result === 400) return next(new ApiError(400, "id UUID formatida bolishi kerak!"));
-      if (result === 404) return next(new ApiError(404, "Bu id dagi malumot topilmadi"));
+      const { id } = req.params
+      const result = await baseClass.getOne('admin', id)
+      if (result === 400)
+        return next(new ApiError(400, 'id UUID formatida bolishi kerak!'))
+      if (result === 404)
+        return next(new ApiError(404, 'Bu id dagi malumot topilmadi'))
       res.status(200).send({
         success: true,
-        data: result
+        data: result,
       })
     } catch (err) {
       next(err)
@@ -43,13 +45,16 @@ export const Admin = {
   },
   async create(req, res, next) {
     try {
-      const info = req.body;
-      if (!info) return next(new ApiError(404, "Create uchun qandaydir malumot kiriting!"));
-      const result = await baseClass.create('admin', info);
+      const info = req.body
+      if (!info)
+        return next(
+          new ApiError(404, 'Create uchun qandaydir malumot kiriting!'),
+        )
+      const result = await baseClass.create('admin', info)
       res.status(200).send({
         success: true,
         message: `admin muvaffaqqiyatli yaratildi`,
-        data: result
+        data: result,
       })
     } catch (err) {
       next(err)
@@ -57,36 +62,43 @@ export const Admin = {
   },
   async update(req, res, next) {
     try {
-      const { id } = req.params;
-      const info = req.body;
-      if (!info) return next(new ApiError(404, "Update uchun qandaydir malumot kiriting!"));
+      const { id } = req.params
+      const info = req.body
+      if (!info)
+        return next(
+          new ApiError(404, 'Update uchun qandaydir malumot kiriting!'),
+        )
 
-      const result = await baseClass.update('admin', id, info);
+      const result = await baseClass.update('admin', id, info)
 
-      if (result === 404) return next(new ApiError(404, "Bu id dagi malumot topilmadi"));
-      if (result === 400) return next(new ApiError(400, "id UUID formatida bolishi kerak!"));
+      if (result === 404)
+        return next(new ApiError(404, 'Bu id dagi malumot topilmadi'))
+      if (result === 400)
+        return next(new ApiError(400, 'id UUID formatida bolishi kerak!'))
 
       res.status(201).send({
         success: true,
-        message: "admin muvaffaqqtiyatli yangilandi",
-        data: result
-      });
+        message: 'admin muvaffaqqtiyatli yangilandi',
+        data: result,
+      })
     } catch (err) {
       next(err)
     }
   },
   async delete(req, res, next) {
     try {
-      const { id } = req.params;
-      const result = await baseClass.delete('admin', id);
-      if (result === 400) return next(new ApiError(400, "id UUID formatida bolishi kerak!"));
-      if (result === 404) return next(new ApiError(404, "Bu id dagi malumot topilmadi"));
+      const { id } = req.params
+      const result = await baseClass.delete('admin', id)
+      if (result === 400)
+        return next(new ApiError(400, 'id UUID formatida bolishi kerak!'))
+      if (result === 404)
+        return next(new ApiError(404, 'Bu id dagi malumot topilmadi'))
 
       if (result === 200) {
         res.status(200).send({
-        success: true,
-        message: "admin muvaffaqqtiyatli o'chirildi"
-      });
+          success: true,
+          message: "admin muvaffaqqtiyatli o'chirildi",
+        })
       }
     } catch (err) {
       next(err)
