@@ -13,8 +13,14 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcrypt": "^6.0.0",
     "commitlint": "^20.1.0",
-    "express": "^5.1.0"
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "morgan": "^1.10.1",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
@@ -23,6 +29,7 @@
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "prisma": "^6.19.0"
   }
 }
