@@ -3,7 +3,6 @@ import { ApiError } from '../errors/apiError.js'
 import baseClass from '../helper/baseClass.js'
 import bcrypt from 'bcrypt'
 import { prisma } from '../lib/prisma.js'
-import { generateAccessToken, generateRefreshToken } from '../helper/jwt.js'
 export const Client = {
   // GET ALL CLIENTS
   async getAll(req, res, next) {
@@ -19,7 +18,8 @@ export const Client = {
         off,
         { orders: true },
       )
-      const newResult = result.map(({ password, token, ...rest }) => rest)
+      console.log(result);
+      const newResult = result.data.map(({ password, token, ...rest }) => rest)
       return res.status(200).json({
         success: true,
         page: pa,

@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", Client.getAll);
 router.get("/:id", Client.getOne);
-router.post("/" , validate(createClientSchema), Client.register);
+router.post("/" , validate(createClientSchema), Client.create);
 router.put("/:id", validate(updateClientSchema), Client.update);
 router.delete("/:id", Client.delete);
 

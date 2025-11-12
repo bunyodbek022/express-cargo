@@ -1,4 +1,5 @@
 import { adminRouter } from "./admin.route.js";
+import { authRouter } from "./auth.route.js";
 import { clientRouter } from "./client.route.js";
 import { currencyTypeRouter } from "./currencyTye.route.js";
 import { operationRouter } from "./operation.route.js";
@@ -16,5 +17,5 @@ mainRouter.use("/operation", operationRouter);
 mainRouter.use("/order", orderRouter);
 mainRouter.use("/order-product", orderProductRouter);
 mainRouter.use("/product", productRouter);
-
+mainRouter.use("/auth", authRouter)
 export {mainRouter}
