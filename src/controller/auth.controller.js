@@ -115,10 +115,9 @@ export const AUTH = {
 
       res.status(200).send({
         success: true,
-        message: "Email muvaffaqqiyatli tasdiqlandi!",
-        data: user
+        message: 'Email muvaffaqqiyatli tasdiqlandi!',
+        data: user,
       })
-      
     } catch (err) {
       next(err)
     }

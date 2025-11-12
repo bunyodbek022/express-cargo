@@ -56,10 +56,12 @@ export const Client = {
       if (!info || Object.keys(info).length === 0) {
         return next(ApiError(400, "Malumotlarni to'g'ri kiriting!"))
       }
-      const clientExist = await prisma.client.findUnique({ where: { email: info.email } });
+      const clientExist = await prisma.client.findUnique({
+        where: { email: info.email },
+      })
       if (!clientExist) {
-         return next(new ApiError(403, "Email oldin ro'yxatdan o'tgan"));
-      };
+        return next(new ApiError(403, "Email oldin ro'yxatdan o'tgan"))
+      }
 
       info.password = await bcrypt.hash(info.password, 10)
       const result = await baseClass.create('client', info)
@@ -83,10 +85,13 @@ export const Client = {
           new ApiError(404, 'Update uchun qandaydir malumot kiriting!'),
         )
       if (info.email) {
-        const emailCheck = await prisma.findUnique({ where: { email: info.email } })
-        if (Object.keys(emailCheck).length) return next(new ApiError(401, "Bu emaildagi user allaqachon mavjud!"))
+        const emailCheck = await prisma.findUnique({
+          where: { email: info.email },
+        })
+        if (Object.keys(emailCheck).length)
+          return next(new ApiError(401, 'Bu emaildagi user allaqachon mavjud!'))
       }
-      
+
       const result = await baseClass.update('client', id, info)
 
       if (result === 404)
@@ -118,7 +123,7 @@ export const Client = {
         res.status(200).send({
           success: true,
           message: "client muvaffaqqtiyatli o'chirildi",
-        });
+        })
       }
     } catch (err) {
       next(err)
