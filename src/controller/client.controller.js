@@ -1,8 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { ApiError } from '../utils/apiError.js'
+import { ApiError } from '../errors/apiError.js'
 import baseClass from '../helper/baseClass.js'
-
+import bcrypt from 'bcrypt'
+import { prisma } from '../lib/prisma.js'
+import { generateAccessToken, generateRefreshToken } from '../helper/jwt.js'
 export const Client = {
+  // GET ALL CLIENTS
   async getAll(req, res, next) {
     try {
       const { limit, page, search } = req.query
@@ -27,6 +30,8 @@ export const Client = {
       next(err)
     }
   },
+
+  // GET ONE CLIENTS
   async getOne(req, res, next) {
     try {
       const { id } = req.params
@@ -43,13 +48,20 @@ export const Client = {
       next(err)
     }
   },
+
+  // CREATE CLIENT
   async create(req, res, next) {
     try {
       const info = req.body
-      if (!info)
-        return next(
-          new ApiError(404, 'Create uchun qandaydir malumot kiriting!'),
-        )
+      if (!info || Object.keys(info).length === 0) {
+        return next(ApiError(400, "Malumotlarni to'g'ri kiriting!"))
+      }
+      const clientExist = await prisma.client.findUnique({ where: { email: info.email } });
+      if (!clientExist) {
+         return next(new ApiError(403, "Email oldin ro'yxatdan o'tgan"));
+      };
+
+      info.password = await bcrypt.hash(info.password, 10)
       const result = await baseClass.create('client', info)
       res.status(200).send({
         success: true,
@@ -60,6 +72,8 @@ export const Client = {
       next(err)
     }
   },
+
+  // UPDATE CLIENT INFO
   async update(req, res, next) {
     try {
       const { id } = req.params
@@ -68,7 +82,11 @@ export const Client = {
         return next(
           new ApiError(404, 'Update uchun qandaydir malumot kiriting!'),
         )
-
+      if (info.email) {
+        const emailCheck = await prisma.findUnique({ where: { email: info.email } })
+        if (Object.keys(emailCheck).length) return next(new ApiError(401, "Bu emaildagi user allaqachon mavjud!"))
+      }
+      
       const result = await baseClass.update('client', id, info)
 
       if (result === 404)
@@ -85,6 +103,8 @@ export const Client = {
       next(err)
     }
   },
+
+  // DELETE
   async delete(req, res, next) {
     try {
       const { id } = req.params
@@ -98,7 +118,7 @@ export const Client = {
         res.status(200).send({
           success: true,
           message: "client muvaffaqqtiyatli o'chirildi",
-        })
+        });
       }
     } catch (err) {
       next(err)

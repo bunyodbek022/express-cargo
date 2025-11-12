@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ApiError } from '../utils/apiError.js'
+import { ApiError } from '../errors/apiError.js'
 import baseClass from '../helper/baseClass.js'
 
 export const Operation = {
@@ -46,10 +46,9 @@ export const Operation = {
   async create(req, res, next) {
     try {
       const info = req.body
-      if (!info)
-        return next(
-          new ApiError(404, 'Create uchun qandaydir malumot kiriting!'),
-        )
+      if (!info || Object.keys(info).length === 0) {
+        return next(ApiError(400, "Create uchun ma'lumot kiriting!"))
+      }
       const result = await baseClass.create('operation', info)
       res.status(200).send({
         success: true,

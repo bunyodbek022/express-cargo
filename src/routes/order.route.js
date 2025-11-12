@@ -1,11 +1,13 @@
-import express from "express";
+import { Router } from "express";
 import { Order } from "../controller/order.controller.js";
 import { createOrderSchema, updateOrderSchema } from "../validation/order.validation.js";
 import { validate } from "../middleware/validate.js";
-const app = express();
+const router = Router();
 
-app.get("/", Order.getAll);
-app.get("/:id", Order.getOne);
-app.post("/" , validate(createOrderSchema), Order.create);
-app.put("/:id", validate(updateOrderSchema), Order.update);
-app.delete("/:id", Order.delete);
+router.get("/", Order.getAll);
+router.get("/:id", Order.getOne);
+router.post("/" , validate(createOrderSchema), Order.create);
+router.put("/:id", validate(updateOrderSchema), Order.update);
+router.delete("/:id", Order.delete);
+
+export {router as orderRouter}
