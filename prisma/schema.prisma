@@ -1,13 +1,11 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 ////////////////ENUM//////////////////
 
@@ -23,87 +21,96 @@ enum Status {
   rejected
 }
 
+enum ROLE {
+  client
+  admin
+}
+
 ///////////////MODEL///////////////////
 
 model Client {
-  id           String    @id @default(uuid())
-  full_name    String    @db.VarChar(50)
+  id           String @id @default(uuid())
+  full_name    String @db.VarChar(50)
   phone_number String
   password     String
-  address      String    @db.VarChar(50)
+  address      String @db.VarChar(50)
   location     String
   email        String
-  tg_link      String    
+  tg_link      String
+  token        String?
+  role         ROLE[]  
+  is_active    Boolean @default(false)
+  verify_code  String 
 
-  orders       Order[]
+  orders Order[]
 }
 
 model CurrencyType {
-  id           String      @id @default(uuid())
-  name         Currency    @default(cash)
-  description  String?
+  id          String   @id @default(uuid())
+  name        Currency @default(cash)
+  description String?
 
   orderProducts OrderProduct[]
 }
 
 model Product {
-  id            String          @id @default(uuid())
-  name          String
-  description   String?
-  created_at    DateTime        @default(now())
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  created_at  DateTime @default(now())
 
   orderProducts OrderProduct[]
 }
 
 model Order {
-  id             String         @id @default(uuid())
-  clientId       String
-  client         Client         @relation(fields: [clientId], references: [id])
-  order_unique_id String        @default(uuid())
-  created_at     DateTime       @default(now())
+  id              String   @id @default(uuid())
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id])
+  order_unique_id String   @default(uuid())
+  created_at      DateTime @default(now())
 
-  orderProducts  OrderProduct[]
-  operations     Operation[]
+  orderProducts OrderProduct[]
+  operations    Operation[]
 }
 
 model OrderProduct {
-  id               String        @id @default(uuid())
-  orderId          String
-  productId        String
-  currencyTypeId   String
-  quantity         Int           @default(1)
-  summa            Decimal
-  truck            String?
-  description      String?
-  created_at       DateTime      @default(now())
+  id             String   @id @default(uuid())
+  orderId        String
+  productId      String
+  currencyTypeId String
+  quantity       Int      @default(1)
+  summa          Decimal
+  truck          String?
+  description    String?
+  created_at     DateTime @default(now())
 
-  order            Order         @relation(fields: [orderId], references: [id])
-  product          Product       @relation(fields: [productId], references: [id])
-  currencyType     CurrencyType  @relation(fields: [currencyTypeId], references: [id])
+  order        Order        @relation(fields: [orderId], references: [id])
+  product      Product      @relation(fields: [productId], references: [id])
+  currencyType CurrencyType @relation(fields: [currencyTypeId], references: [id])
 }
 
 model Operation {
-  id              String     @id @default(uuid())
-  orderId         String
-  adminId         String?
-  status          Status     @default(ongoing)
-  operation_date  DateTime   @default(now())
-  description     String?
+  id             String   @id @default(uuid())
+  orderId        String
+  adminId        String?
+  status         Status   @default(ongoing)
+  operation_date DateTime @default(now())
+  description    String?
 
-  order           Order      @relation(fields: [orderId], references: [id])
-  admin           Admin?     @relation(fields: [adminId], references: [id])
+  order Order  @relation(fields: [orderId], references: [id])
+  admin Admin? @relation(fields: [adminId], references: [id])
 }
 
 model Admin {
-  id            String     @id @default(uuid())
-  full_name     String     @db.VarChar(50)
-  password      String
-  phone_number  String
-  email         String
-  tg_link       String
-  token         String
-  is_creator    Boolean    @default(false)
-  is_active     Boolean    @default(false)
+  id           String  @id @default(uuid())
+  full_name    String  @db.VarChar(50)
+  password     String
+  phone_number String
+  email        String
+  tg_link      String
+  token        String?
+  is_creator   Boolean @default(false)
+  is_active    Boolean @default(false)
 
-  operations    Operation[]
+  operations Operation[]
 }

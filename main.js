@@ -2,13 +2,15 @@ import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { errorHandler } from "./src/handler/error.handler.js";
+import errorHandler from "./src/middleware/errorHandler.js";
+import { mainRouter } from "./src/routes/index.js";
 dotenv.config()
 const app = express();
 app.use(cookieParser());  // cookie
 app.use(express.json());
 app.use(morgan('tiny'));  // morgan
 
+app.use("/", mainRouter);
 
 app.use(errorHandler);  // errorHandler
 

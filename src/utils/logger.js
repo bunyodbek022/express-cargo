@@ -1,32 +1,23 @@
-import winston from 'winston';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import winston from 'winston'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { combine, timestamp, printf, colorize } = winston.format
 
+// Log formatini aniqlaymiz
+const logFormat = printf(({ level, message, timestamp }) => {
+  return `[${timestamp}] ${level}: ${message}`
+})
+
+// Logger yaratamiz
 const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    winston.format.json()
+  level: 'info', // minimal log darajasi
+  format: combine(
+    colorize(), // konsolda rangli chiqish uchun
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    logFormat
   ),
   transports: [
-    // Terminalga chiqarish
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      )
-    }),
+    new winston.transports.Console(), // konsolga chiqarish
+  ],
+})
 
-    // Faylga yozish
-    new winston.transports.File({
-      filename: path.join(__dirname, 'logs', 'app.log')
-    })
-  ]
-});
-
-export default logger;
+export default logger

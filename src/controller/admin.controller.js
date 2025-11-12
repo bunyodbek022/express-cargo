@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { ApiError } from '../utils/apiError.js'
+import { ApiError } from '../errors/apiError.js'
 import baseClass from '../helper/baseClass.js'
+import bcrypt from 'bcrypt'
 
 export const Admin = {
   async getAll(req, res, next) {
@@ -46,10 +47,10 @@ export const Admin = {
   async create(req, res, next) {
     try {
       const info = req.body
-      if (!info)
-        return next(
-          new ApiError(404, 'Create uchun qandaydir malumot kiriting!'),
-        )
+      if (!info || Object.keys(info).length === 0) {
+        return next(ApiError(400, "Create uchun ma'lumot kiriting!"))
+      }
+      info.password = await bcrypt.hash(info.password, 10)
       const result = await baseClass.create('admin', info)
       res.status(200).send({
         success: true,
