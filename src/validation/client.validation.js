@@ -1,5 +1,9 @@
 import Joi from "joi";
 
+export const loginClientScheme = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required()
+});
 
 export const createClientSchema = Joi.object({
   full_name: Joi.string().max(50).required(),
@@ -9,9 +13,7 @@ export const createClientSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   tg_link: Joi.string().uri().optional(),
-  token: Joi.string().optional(),
-  is_active: Joi.boolean().optional(),
-  verify_code: Joi.string().length(6).optional()
+  token: Joi.string().optional()
 });
 
 
@@ -24,5 +26,4 @@ export const updateClientSchema = Joi.object({
   password: Joi.string().min(6).optional(),
   tg_link: Joi.string().uri().optional(),
   token: Joi.string().optional(),
-  is_active: Joi.boolean().optional()
 });

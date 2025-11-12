@@ -35,7 +35,7 @@ model Client {
   password     String
   address      String @db.VarChar(50)
   location     String
-  email        String
+  email        String @unique
   tg_link      String
   token        String?
   role         ROLE[]  
@@ -106,7 +106,7 @@ model Admin {
   full_name    String  @db.VarChar(50)
   password     String
   phone_number String
-  email        String
+  email        String  @unique
   tg_link      String
   token        String?
   is_creator   Boolean @default(false)

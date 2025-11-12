@@ -2,6 +2,60 @@
 import logger from '../utils/logger.js'
 import validator from 'validator'
 import { prisma } from '../lib/prisma.js'
+export const modelFieldsMap = {
+  client: [
+    "full_name",
+    "phone_number",
+    "email",
+    "address",
+    "location",
+    "tg_link",
+    "token",
+    "is_active",
+    "verify_code"
+  ],
+  currencyType: [
+    "name",
+    "description"
+  ],
+  product: [
+    "name",
+    "description",
+    "created_at"
+  ],
+  order: [
+    "order_unique_id",
+    "clientId",
+    "created_at"
+  ],
+  orderProduct: [
+    "orderId",
+    "productId",
+    "currencyTypeId",
+    "quantity",
+    "summa",
+    "truck",
+    "description",
+    "created_at"
+  ],
+  operation: [
+    "orderId",
+    "adminId",
+    "status",
+    "operation_date",
+    "description"
+  ],
+  admin: [
+    "full_name",
+    "password",
+    "phone_number",
+    "email",
+    "tg_link",
+    "token",
+    "is_creator",
+    "is_active"
+  ]
+};
 
 class BaseClass {
   // Table nomi validatsiyasi
@@ -80,17 +134,13 @@ class BaseClass {
   }
 
   // SEARCH AND PAGINATION (GET ALL)
-  async searchAndPaginate(modelName, searchQuery, limit, offset, include = {}) {
+  async searchAndPaginate(searchQuery, modelName, limit, offset, include = {}) {
     this.validateTableName(modelName)
 
-    // Prisma fieldlaridan filter yasash
-    const modelFields = Object.keys(prisma[modelName]._meta?.fields || {})
+    const modelFields = modelFieldsMap[modelName] || []
+
     const where = searchQuery
-      ? {
-          OR: modelFields.map(field => ({
-            [field]: { contains: searchQuery, mode: 'insensitive' }
-          }))
-        }
+      ? { OR: modelFields.map(field => ({ [field]: { contains: searchQuery, mode: 'insensitive' } })) }
       : undefined
 
     try {
@@ -100,7 +150,9 @@ class BaseClass {
         take: limit ? parseInt(limit, 10) : undefined,
         include
       })
-      return result
+
+      const total = await prisma[modelName].count({ where })
+      return { data: result, _meta: { total } }
     } catch (err) {
       logger.warn(`Failed to search ${modelName}: ${err.message}`)
       throw err
